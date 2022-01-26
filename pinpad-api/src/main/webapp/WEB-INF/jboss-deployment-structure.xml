@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+	<deployment>
+		<dependencies>			
+<!-- 			<module name="deployment.renalis-core-1.0.ear" export="TRUE"/> -->
+<!-- 			<module name="deployment.renalis-core-1.0.ear.renalis-ejb-1.0.jar" export="TRUE"/> -->
+			<module name="com.oracle.ojdbc" slot="main" />
+			<module name="org.jboss.ironjacamar.jdbcadapters" slot="main" />
+			<module name="org.slf4j" slot="main"/>
+		</dependencies>
+	</deployment>
+</jboss-deployment-structure>
