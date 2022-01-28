@@ -289,7 +289,8 @@ public class FacLogTramaPinpadDAOImpl extends BaseDAO<FacLogTramaPinpad, Long> {
 		strJPQLBase.append("	   '0000000000000' as otros_impuestos, ");
 		strJPQLBase.append("	   '0000000000000' as cash_over,");
 		strJPQLBase.append("	   lt.monto_base_sin_iva, ");
-		strJPQLBase.append("	   lt.monto_base_con_iva ");
+		strJPQLBase.append("	   lt.monto_base_con_iva, ");
+		strJPQLBase.append("	   lt.secuencia ");
 		strJPQLBase.append("       		from fac_log_trama_pinpad lt ");
 		strJPQLBase.append("       		where lt.tipo_mensaje = 'PP' ");
 		strJPQLBase.append("         	  and lt.codigo_respuesta = '00' ");
@@ -346,6 +347,7 @@ public class FacLogTramaPinpadDAOImpl extends BaseDAO<FacLogTramaPinpad, Long> {
 			objDetalleArchivoCapturaDTO.setCashOver(!ObjectUtils.isEmpty(objects[16]) ? objects[16].toString() : null);
 			objDetalleArchivoCapturaDTO.setMontoBaseSinIva(!ObjectUtils.isEmpty(objects[17]) ? Double.parseDouble(objects[17].toString()) : null);
 			objDetalleArchivoCapturaDTO.setMontoBaseConIva(!ObjectUtils.isEmpty(objects[18]) ? Double.parseDouble(objects[18].toString()) : null);
+			objDetalleArchivoCapturaDTO.setSecuencia(ObjectUtils.isNotEmpty(objects[19]) ? new Long(objects[19].toString()) : null);
 			lsDetalleArchivoCapturaDTO.add(objDetalleArchivoCapturaDTO);
 		}
 		return lsDetalleArchivoCapturaDTO;

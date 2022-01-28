@@ -24,6 +24,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 import com.pinpad.ejb.exceptions.BOException;
+import com.pinpad.ejb.exceptions.BOExceptionUpt;
 
 /**
  * @author H P
@@ -44,7 +45,7 @@ public class SFTPUtil {
 	 * @throws JSchException
 	 */
 	public static Session getSession(String host, int port, String username, String password)
-			throws JSchException, BOException {
+			throws JSchException, BOExceptionUpt {
 
 		JSch.setLogger(new MyLogger());
 
@@ -114,14 +115,14 @@ public class SFTPUtil {
 	 * @param uploadFile
 	 * @param sftp
 	 */
-	public void upload(String directory, Path file, String strFileName, ChannelSftp sftp) throws BOException {
+	public void upload(String directory, Path file, String strFileName, ChannelSftp sftp) throws BOExceptionUpt {
 		try {
 			sftp.cd(directory);
 			// File file = new File(uploadFile);
 			sftp.put(new FileInputStream(file.toFile()), strFileName);
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Exception: " + e.getMessage());
-			throw new BOException(e.getMessage(), e.getCause());
+			throw new BOExceptionUpt(e.getMessage(), e.getCause());
 		}
 		sftp.disconnect();
 		sftp.exit();
@@ -237,9 +238,8 @@ public class SFTPUtil {
 	}
 
 	public static void uploadFile(Path file, String strFileName, String strRutaSftp, String strIpServer,
-			Integer intPuerto, String strUser, String strPassword) throws JSchException, BOException {
+			Integer intPuerto, String strUser, String strPassword) throws JSchException, BOExceptionUpt {
 		SFTPUtil sf = new SFTPUtil();
-		logger.info(strIpServer + "," + intPuerto + "," + strUser + "," + strPassword + "," + strRutaSftp);
 		Session session = getSession(strIpServer, intPuerto, strUser, strPassword);
 		ChannelSftp cs = connect(session);
 		sf.upload(strRutaSftp, file, strFileName, cs);

@@ -18,6 +18,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class DetalleArchivoCapturaDTO {
 	
+	private Long secuencia;
+	//
 	private String tid;
 	private String fecha;
 	private String hora;

@@ -17,6 +17,7 @@ import com.pinpad.ejb.dto.ProcesoControlDatafastDTO;
 import com.pinpad.ejb.dto.ProcesoPagoDatafastDTO;
 import com.pinpad.ejb.dto.ProcesoReversoDatafastDTO;
 import com.pinpad.ejb.exceptions.BOException;
+import com.pinpad.ejb.exceptions.BOExceptionUpt;
 import com.pinpad.ejb.model.FacLogTramaPinpad;
 
 /**
@@ -145,6 +146,17 @@ public interface IDatafastBO {
 	Path obtenerArchivoCaptura(String strFechaInicio, String strFechaFin) throws BOException, ParseException;
 	
 	/**
+	 * Proceso para generación de archivo de captura con transacciones aprobadas Red Datafast.
+	 * 
+	 * @author Frank Solis
+	 * @param strFechaInicio
+	 * @param strFechaFin
+	 * @return file
+	 * @throws BOException
+	 */
+	Path obtenerArchivoCapturaPreviaCarga(String strFechaInicio, String strFechaFin) throws BOExceptionUpt, ParseException;
+	
+	/**
 	 * Proceso para cargar archivo de captura a server SFTP.
 	 * 
 	 * @author Frank Solis
@@ -152,7 +164,7 @@ public interface IDatafastBO {
 	 * @return String
 	 * @throws BOException
 	 */
-	String cargaArchivoSftp (Path file) throws BOException;
+	String cargaArchivoSftp (Path file) throws BOExceptionUpt;
 	
 	/**
 	 * Proceso de Reverso automático de Pago Red Datafast.
