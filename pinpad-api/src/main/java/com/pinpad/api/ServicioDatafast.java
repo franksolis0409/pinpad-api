@@ -119,7 +119,7 @@ public class ServicioDatafast {
 		}
 	}
 
-	@DELETE
+	@POST
 	@Path("/anulacionPago")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
