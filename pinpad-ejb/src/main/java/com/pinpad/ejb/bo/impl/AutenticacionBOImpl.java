@@ -36,10 +36,12 @@ public class AutenticacionBOImpl implements IAutenticacionBO {
 		// Valida Credenciales
 		if (SecurityUtil.validarCredencialesPinPadWS(strUsuario, strClave)) {
 			// Asigna Tiempo de 1 dia
-			long ttTiempoValido = 1000 * 60 * 60 * 24 * 1;
+//			long ttTiempoValido = 1000 * 60 * 60 * 24 * 1;
+			// Asigna Tiempo de 1 hora
+			long ttTiempoValido = 1000 * 60 * 60 * 1;
 			// Asignamos valor para retorna Token de tipo (Bearer)			
 			objAuthentication.setTokenType(AuthenticationScheme.BEARER.getName());
-			objAuthentication.setExpires("1 dia");
+			objAuthentication.setExpires("1 hora");
 			try {
 				objAuthentication.setAccesToken(JWTUtil.createJWT(strUsuario, ttTiempoValido));
 			} catch (Exception e) {

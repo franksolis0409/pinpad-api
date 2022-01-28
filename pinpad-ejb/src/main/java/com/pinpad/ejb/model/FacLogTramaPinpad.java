@@ -230,4 +230,11 @@ public class FacLogTramaPinpad {
 	
 	@Column(name = "ERROR_INTERNO")
 	private String errorInterno;
+	
+	@Column(name = "CARGADO_DATAFAST")
+	private String cargadoDatafast;
+	
+	@Column(name = "FECHA_CARGA_DATAFAST", insertable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date fechaCargaDatafast;
 }

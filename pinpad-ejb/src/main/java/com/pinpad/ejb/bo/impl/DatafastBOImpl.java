@@ -22,9 +22,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-//import org.apache.logging.log4j.LogManager;
-//import org.apache.logging.log4j.Logger;
 
 import com.amazonaws.util.IOUtils;
 import com.jcraft.jsch.JSchException;
@@ -49,6 +46,7 @@ import com.pinpad.ejb.enums.ParametrosXEmpresa;
 import com.pinpad.ejb.enums.RedAdquirente;
 import com.pinpad.ejb.enums.TipoArchivoEnum;
 import com.pinpad.ejb.exceptions.BOException;
+import com.pinpad.ejb.exceptions.BOExceptionUpt;
 import com.pinpad.ejb.model.DafXParametrosXEmpresa;
 import com.pinpad.ejb.model.DafXParametrosXEmpresaCPK;
 import com.pinpad.ejb.model.FacCajasPinpad;
@@ -923,46 +921,165 @@ public class DatafastBOImpl implements IDatafastBO {
 			// Retorna archivo temporal
 			return file;
 		} catch (Exception e) {
-			throw new BOException("pin.warn.tempFile", new Object[] { e.getMessage() }, new Object[] { e.getMessage(), ExceptionUtils.getStackTrace(e) });
+			throw new BOException("pin.warn.tempFile", new Object[] { e.getMessage() });
+		} finally {
+			if (ObjectUtils.isNotEmpty(is))
+				try {
+					is.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					logger.log(Level.SEVERE, "Exception: " + e);
+				}
 		}
 	}
 	
-	public String cargaArchivoSftp(Path file) throws BOException {
+	public Path obtenerArchivoCapturaPreviaCarga(String strFechaInicio, String strFechaFin) throws BOExceptionUpt, ParseException {
+		List<String> lsLineasArchivo;
+		StringBuilder sb = new StringBuilder();
+		ByteArrayInputStream is = null;
+		Path file = null;
+		Date fechaActual = new Date();
+		if (!ObjectUtils.isEmpty(strFechaInicio) && !ObjectUtils.isEmpty(strFechaFin)) {
+			if (!GenericUtil.validarFormatoFecha(strFechaInicio))
+				throw new BOExceptionUpt("pin.warn.formatoFecha");
+			if (!GenericUtil.validarFormatoFecha(strFechaFin))
+				throw new BOExceptionUpt("pin.warn.formatoFecha");
+			if (GenericUtil.esRangoFechaFutura(new SimpleDateFormat("dd/MM/yyyy").parse(strFechaFin),
+					new SimpleDateFormat("dd/MM/yyyy").parse(strFechaInicio)))
+				throw new BOExceptionUpt("pin.warn.fechaInicioFutura");
+		} else if (!ObjectUtils.isEmpty(strFechaInicio) && ObjectUtils.isEmpty(strFechaFin)) {
+			if (!GenericUtil.validarFormatoFecha(strFechaInicio))
+				throw new BOExceptionUpt("pin.warn.formatoFecha");
+		} else if (ObjectUtils.isEmpty(strFechaInicio) && !ObjectUtils.isEmpty(strFechaFin)) {
+			if (!GenericUtil.validarFormatoFecha(strFechaFin))
+				throw new BOExceptionUpt("pin.warn.formatoFecha");
+		}
+		Integer intCountDetalle = 0;
+		List<String> lsMidAprobados = objFacLogTramaPinpadDAOImpl.obtenerMidAprobados(strFechaInicio, strFechaFin);
+		for (String mid : lsMidAprobados) {
+			intCountDetalle++;
+			// Se agrega cabecera de archivo
+			ImpresionTextoUtil.addDetalle("1" + mid 
+											+ new SimpleDateFormat("yyMMdd").format(fechaActual)
+											+ ImpresionTextoUtil.darEspacioBlanco(183), 1);
+			List<DetalleArchivoCapturaDTO> lsDetalleArchivoCapturaDTO = objFacLogTramaPinpadDAOImpl
+					.findTransaccionesAprobadasMid(mid, strFechaInicio, strFechaFin);
+			// Se agrega detalle de archivo
+			for (DetalleArchivoCapturaDTO detalleArchivoCapturaDTO : lsDetalleArchivoCapturaDTO) {
+				intCountDetalle++;
+				ImpresionTextoUtil.addDetalle("2" + detalleArchivoCapturaDTO.getTid() 
+												+ detalleArchivoCapturaDTO.getFecha()
+												+ detalleArchivoCapturaDTO.getHora() 
+												+ detalleArchivoCapturaDTO.getSecuenciaTransaccion()
+												+ detalleArchivoCapturaDTO.getNumeroAutorizacion() 
+												+ detalleArchivoCapturaDTO.getLote()
+												+ GenericUtil.convertDoubleToStringFormat(detalleArchivoCapturaDTO.getValorTotal(), 13)
+												+ "1"
+												+ detalleArchivoCapturaDTO.getTipoCredito() 
+												+ GenericUtil.convertIntegerToStringFormat(detalleArchivoCapturaDTO.getPlazoDiferido(), 2)
+												+ GenericUtil.convertDoubleToStringFormat(detalleArchivoCapturaDTO.getValorIva(), 13)
+												+ detalleArchivoCapturaDTO.getValorServicio() 
+												+ detalleArchivoCapturaDTO.getValorPropina()
+												+ GenericUtil.convertDoubleToStringFormat(detalleArchivoCapturaDTO.getValorInteres(), 13)
+												+ detalleArchivoCapturaDTO.getMontoFijo() 
+												+ detalleArchivoCapturaDTO.getValorIce()
+												+ detalleArchivoCapturaDTO.getOtrosImpuestos() 
+												+ detalleArchivoCapturaDTO.getCashOver()
+												+ GenericUtil.convertDoubleToStringFormat(detalleArchivoCapturaDTO.getMontoBaseSinIva(), 13)
+												+ GenericUtil.convertDoubleToStringFormat(detalleArchivoCapturaDTO.getMontoBaseConIva(), 13)
+												+ ImpresionTextoUtil.darEspacioBlanco(13), 1);
+				
+				// Actualización de nuevos campos de carga de cada transacción a datafast.
+				if (ObjectUtils.isEmpty(detalleArchivoCapturaDTO.getSecuencia()))
+					throw new BOExceptionUpt("pin.warn.noSecuenciaEnLista");
+				
+				Optional<FacLogTramaPinpad> opFacLogTramaPinpad = objFacLogTramaPinpadDAOImpl
+						.find(detalleArchivoCapturaDTO.getSecuencia());
+				
+				if (ObjectUtils.isEmpty(opFacLogTramaPinpad))
+					throw new BOExceptionUpt("pin.warn.secuenciaLogTrama");
+				
+				opFacLogTramaPinpad.get().setCargadoDatafast("S");
+				opFacLogTramaPinpad.get().setFechaCargaDatafast(fechaActual);
+				objFacLogTramaPinpadDAOImpl.update(opFacLogTramaPinpad.get());
+			}
+		}
+		
+		if (intCountDetalle <= 0)
+			throw new BOExceptionUpt("pin.warn.sinRegistros");
+		
+		// Se agrega pie de archivo
+		ImpresionTextoUtil.addPieLinea("9" + new SimpleDateFormat("yyMMdd").format(fechaActual)
+										+ GenericUtil.convertIntegerToStringFormat(intCountDetalle, 6)
+										+ ImpresionTextoUtil.darEspacioBlanco(187), 0);		
+
+		// Se genera archivo
+		lsLineasArchivo = ImpresionTextoUtil.generarDocumento();
+		// Convierte StringBuilder
+		for (String linea : lsLineasArchivo) {
+			sb.append(linea);
+		}
+		try {
+			//GENERA INPUT STREAM A PARTIR DE STRING BUILDER
+			is = new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.ISO_8859_1));
+			//CREA ARCHIVO TEMPORAL
+			file = Files.createTempFile("archivoCaptura", ".tmp");
+			//AÑADE EL inputSteam del archivo temporal
+			Files.write(file, IOUtils.toByteArray(is));
+			
+			cargaArchivoSftp(file);
+			
+			// Retorna archivo temporal
+			return file;
+		} catch (Exception e) {
+			throw new BOExceptionUpt("pin.warn.tempFile", new Object[] { e.getMessage() });
+		} finally {
+			if (ObjectUtils.isNotEmpty(is))
+				try {
+					is.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					logger.log(Level.SEVERE, "Exception: " + e);
+				}
+		}
+	}
+	
+	public String cargaArchivoSftp(Path file) throws BOExceptionUpt {
 		String strFileName = new SimpleDateFormat("MMddyyyy").format(new Date()) + "."
 				+ TipoArchivoEnum.VER.getExtension();
 
 		Optional<DafXParametrosXEmpresa> objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
 				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.ROUTE_SFTP_DATAFAST.getName()));
 		if (!objDafXParametrosXEmpresaOp.isPresent())
-			throw new BOException("pin.warn.parametroNoEncontrado",
+			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
 					new Object[] { ParametrosXEmpresa.ROUTE_SFTP_DATAFAST.getName() });
 		String strRutaSftp = objDafXParametrosXEmpresaOp.get().getValorString();
 
 		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
 				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.DIR_SFTP_DATAFAST.getName()));
 		if (!objDafXParametrosXEmpresaOp.isPresent())
-			throw new BOException("pin.warn.parametroNoEncontrado",
+			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
 					new Object[] { ParametrosXEmpresa.DIR_SFTP_DATAFAST.getName() });
 		String strIpServer = objDafXParametrosXEmpresaOp.get().getValorString();
 
 		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
 				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.PORT_SFTP_DATAFAST.getName()));
 		if (!objDafXParametrosXEmpresaOp.isPresent())
-			throw new BOException("pin.warn.parametroNoEncontrado",
+			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
 					new Object[] { ParametrosXEmpresa.PORT_SFTP_DATAFAST.getName() });
 		Integer intPuerto = objDafXParametrosXEmpresaOp.get().getValorNumber().intValue();
 
 		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
 				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.USER_SFTP_DATAFAST.getName()));
 		if (!objDafXParametrosXEmpresaOp.isPresent())
-			throw new BOException("pin.warn.parametroNoEncontrado",
+			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
 					new Object[] { ParametrosXEmpresa.USER_SFTP_DATAFAST.getName() });
 		String strUser = objDafXParametrosXEmpresaOp.get().getValorString();
 
 		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
 				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.PASSWORD_SFTP_DATAFAST.getName()));
 		if (!objDafXParametrosXEmpresaOp.isPresent())
-			throw new BOException("pin.warn.parametroNoEncontrado",
+			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
 					new Object[] { ParametrosXEmpresa.PASSWORD_SFTP_DATAFAST.getName() });
 		String strPassword = objDafXParametrosXEmpresaOp.get().getValorString();
 
@@ -976,10 +1093,10 @@ public class DatafastBOImpl implements IDatafastBO {
 				logger.info("Eliminando archivo temporal debido a excepción...");
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.log(Level.SEVERE, "Exception: " + e1.getMessage());
 			}
 			logger.log(Level.SEVERE, "Exception: " + e.getMessage());
-			throw new BOException(e.getMessage(), e.getCause());
+			throw new BOExceptionUpt(e.getMessage(), e.getCause());
 		}
 		return strFileName;
 	}

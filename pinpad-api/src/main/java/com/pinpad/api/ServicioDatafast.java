@@ -3,12 +3,17 @@
  */
 package com.pinpad.api;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -18,6 +23,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 //import org.apache.logging.log4j.LogManager;
 //import org.apache.logging.log4j.Logger;
@@ -32,14 +39,12 @@ import com.pinpad.ejb.dto.ProcesoPagoDatafastDTO;
 import com.pinpad.ejb.dto.ProcesoReversoDatafastDTO;
 import com.pinpad.ejb.enums.TipoArchivoEnum;
 import com.pinpad.ejb.exceptions.BOException;
+import com.pinpad.ejb.exceptions.BOExceptionUpt;
 import com.pinpad.ejb.model.FacLogTramaPinpad;
 import com.pinpad.ejb.util.MensajesUtil;
 import com.pinpad.exceptions.CustomExceptionHandler;
 import com.pinpad.security.Secure;
 import com.pinpad.util.ServiciosEjb;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author H P
@@ -114,7 +119,7 @@ public class ServicioDatafast {
 		}
 	}
 
-	@POST
+	@DELETE
 	@Path("/anulacionPago")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -227,10 +232,11 @@ public class ServicioDatafast {
 	public Response obtenerArchivoCaptura(@HeaderParam("Accept-Language") String strLanguage,
 			@QueryParam("argFechaInicio") String strFechaInicio, @QueryParam("argFechaFin") String strFechaFin)
 			throws ParseException {
+		java.nio.file.Path file = null;
 		try {
 			String strFileName = new SimpleDateFormat("MMddyyyy").format(new Date()) + "."
 					+ TipoArchivoEnum.VER.getExtension();
-			java.nio.file.Path file = ServiciosEjb.getDatafastEjb().obtenerArchivoCaptura(strFechaInicio, strFechaFin);
+			file = ServiciosEjb.getDatafastEjb().obtenerArchivoCaptura(strFechaInicio, strFechaFin);
 			return new ResponseOk().responseOkTempFile(file, strFileName, TipoArchivoEnum.VER.getContentType());
 		} catch (BOException e) {
 			logger.log(Level.SEVERE, "Exception: " + e);
@@ -246,17 +252,25 @@ public class ServicioDatafast {
 	public Response subirArchivoCaptura(@HeaderParam("Accept-Language") String strLanguage,
 			@QueryParam("argFechaInicio") String strFechaInicio, @QueryParam("argFechaFin") String strFechaFin)
 			throws ParseException {
+		java.nio.file.Path file = null;
 		try {
-			java.nio.file.Path file = ServiciosEjb.getDatafastEjb().obtenerArchivoCaptura(strFechaInicio, strFechaFin);
-//			String strFileName = ServiciosEjb.getDatafastEjb().cargaArchivoSftp(file);
-//			return new ResponseOk().responseOkTempFile(file, strFileName, TipoArchivoEnum.VER.getContentType());
-			ServiciosEjb.getDatafastEjb().cargaArchivoSftp(file);
+			file = ServiciosEjb.getDatafastEjb().obtenerArchivoCapturaPreviaCarga(strFechaInicio, strFechaFin);
+			//ServiciosEjb.getDatafastEjb().cargaArchivoSftp(file);
 			return Response.status(Status.OK).entity(new ResponseOk(
 					MensajesUtil.getMensaje("pin.response.ok", MensajesUtil.validateSupportedLocale(strLanguage)),
 					null)).build();
-		} catch (BOException e) {
+		} catch (BOExceptionUpt e) {
 			logger.log(Level.SEVERE, "Exception: " + e);
 			throw new CustomExceptionHandler(e.getTranslatedMessage(strLanguage), e.getData());
+		} finally {
+			if (ObjectUtils.isNotEmpty(file)) {
+				try {
+					Files.deleteIfExists(file);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					logger.log(Level.SEVERE, "Exception: " + e);
+				}
+			}
 		}
 	}
 
