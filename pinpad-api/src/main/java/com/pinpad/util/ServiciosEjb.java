@@ -21,8 +21,8 @@ public class ServiciosEjb {
 
 	private static final Logger logger = Logger.getLogger(ServiciosEjb.class.getName());
 
-	public static final String jndiAutenticacionEjb = "java:global/pinpad-api-test/AutenticacionBOImpl!com.pinpad.ejb.bo.IAutenticacionBO";
-	public static final String jndiDatafastEjb = "java:global/pinpad-api-test/DatafastBOImpl!com.pinpad.ejb.bo.IDatafastBO";
+	public static final String jndiAutenticacionEjb = "java:global/pinpad-api/AutenticacionBOImpl!com.pinpad.ejb.bo.IAutenticacionBO";
+	public static final String jndiDatafastEjb = "java:global/pinpad-api/DatafastBOImpl!com.pinpad.ejb.bo.IDatafastBO";
 
 	/**
 	 * Retorna EJB de Datafast.
