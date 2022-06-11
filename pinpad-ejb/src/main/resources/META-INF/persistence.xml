@@ -6,8 +6,8 @@
 
 	<persistence-unit name="pinpadPU"
 		transaction-type="JTA">
-		<jta-data-source>java:/PinPadApi9CDS</jta-data-source>
-		<!-- <jta-data-source>java:/PinPadApiDS</jta-data-source> -->
+		<jta-data-source>java:/PinPadApiDS</jta-data-source>
+		<!-- <jta-data-source>java:/PinPadApi9CDS</jta-data-source> -->
 		<!-- <jta-data-source>java:/PinPadApiTestDS</jta-data-source> -->
 		<!-- <jta-data-source>java:/PinPadApiProdDS</jta-data-source> -->
 		<exclude-unlisted-classes>false</exclude-unlisted-classes>
