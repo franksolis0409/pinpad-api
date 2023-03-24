@@ -181,8 +181,8 @@ public class DatafastUtil {
 												new Object[] { objFacLiquidadorPinpad.getCodigoLiquidador() },
 												MensajesUtil.Locale));
 									else {
-										objTrama.setCodBancoLiquidador(
-												objFacLiquidadorPinpad.getDafInstituciones().getCodigoInstitucion());
+										objTrama.setCodBancoLiquidador(objFacLiquidadorPinpad.getDafInstituciones()
+												.getDafInstitucionesCPK().getCodigoInstitucion());
 										objTrama.setNombreBancoLiquidador(
 												objFacLiquidadorPinpad.getDafInstituciones().getNombreInstitucion());
 									}
@@ -200,7 +200,8 @@ public class DatafastUtil {
 												MensajesUtil.Locale));
 									else {
 										objTrama.setCodBancoEmisor(
-												objFacLiquidadorPinpad.getDafInstituciones().getCodigoInstitucion());
+												objFacLiquidadorPinpad.getDafInstituciones().getDafInstitucionesCPK()
+														.getCodigoInstitucion());
 										objTrama.setNombreBancoEmisor(
 												objFacLiquidadorPinpad.getDafInstituciones().getNombreInstitucion());
 									}
@@ -218,8 +219,9 @@ public class DatafastUtil {
 												new Object[] { objFacMarcasTarjetaPinpad.getGrupoTarjeta() },
 												MensajesUtil.Locale));
 									else {
-										objTrama.setCodTarjeta(new BigDecimal(objFacMarcasTarjetaPinpad
-												.getDafMarcasTarjetaCredito().getCodigoMarcaTc()));
+										objTrama.setCodTarjeta(
+												new BigDecimal(objFacMarcasTarjetaPinpad.getDafMarcasTarjetaCredito()
+														.getDafMarcasTarjetaCreditoCPK().getCodigoMarcaTc()));
 										objTrama.setNombreTarjeta(objFacMarcasTarjetaPinpad.getDafMarcasTarjetaCredito()
 												.getNombreMarcaTc());
 									}

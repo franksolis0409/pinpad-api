@@ -26,10 +26,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import com.amazonaws.util.IOUtils;
 import com.jcraft.jsch.JSchException;
 import com.pinpad.ejb.bo.IDatafastBO;
-import com.pinpad.ejb.dao.impl.DafXParametrosXEmpresaDAOImpl;
+import com.pinpad.ejb.dao.impl.GrlParametrosPinpadDAOImpl;
 import com.pinpad.ejb.dao.impl.FacCajasPinpadDAOImpl;
 import com.pinpad.ejb.dao.impl.FacLogTramaPinpadDAOImpl;
-import com.pinpad.ejb.dao.impl.FacParametrosGeneralesDAOImpl;
 import com.pinpad.ejb.dao.impl.FacPinpadBinTarjDatafastDAOImpl;
 import com.pinpad.ejb.dao.impl.FacPinpadBinesMedianetDAOImpl;
 import com.pinpad.ejb.dto.DetalleArchivoCapturaDTO;
@@ -42,13 +41,12 @@ import com.pinpad.ejb.dto.ProcesoPagoDatafastDTO;
 import com.pinpad.ejb.dto.ProcesoReversoDatafastDTO;
 import com.pinpad.ejb.enums.CodigoRedAdquirente;
 import com.pinpad.ejb.enums.MarcasTarjeta;
-import com.pinpad.ejb.enums.ParametrosXEmpresa;
+import com.pinpad.ejb.enums.ParametrosPinpad;
 import com.pinpad.ejb.enums.RedAdquirente;
 import com.pinpad.ejb.enums.TipoArchivoEnum;
 import com.pinpad.ejb.exceptions.BOException;
 import com.pinpad.ejb.exceptions.BOExceptionUpt;
-import com.pinpad.ejb.model.DafXParametrosXEmpresa;
-import com.pinpad.ejb.model.DafXParametrosXEmpresaCPK;
+import com.pinpad.ejb.model.GrlParametrosPinpad;
 import com.pinpad.ejb.model.FacCajasPinpad;
 import com.pinpad.ejb.model.FacLogTramaPinpad;
 import com.pinpad.ejb.model.FacPinpadBinTarjDatafast;
@@ -72,13 +70,11 @@ public class DatafastBOImpl implements IDatafastBO {
 	@EJB
 	private FacCajasPinpadDAOImpl objFacCajasPinpadDAOImpl;
 	@EJB
-	private FacParametrosGeneralesDAOImpl objFacParametrosGeneralesDAOImpl;
-	@EJB
 	private FacLogTramaPinpadDAOImpl objFacLogTramaPinpadDAOImpl;
 	@EJB
 	private DatafastUtil objDatafastUtil;
 	@EJB
-	private DafXParametrosXEmpresaDAOImpl objDafXParametrosXEmpresaDAOImpl;
+	private GrlParametrosPinpadDAOImpl objGrlParametrosPinpadDAOImpl;
 	@EJB
 	private FacPinpadBinesMedianetDAOImpl objFacPinpadBinesMedianetDAOImpl;
 	@EJB
@@ -121,8 +117,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		
@@ -217,7 +213,8 @@ public class DatafastBOImpl implements IDatafastBO {
 		        		intCodigoRed = CodigoRedAdquirente.MEDIANET.getCodigo();
 					}
 					if (!ObjectUtils.isEmpty(opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito())) {
-						bigCodigoTarjeta = new BigDecimal(opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito().getCodigoMarcaTc());
+						bigCodigoTarjeta = new BigDecimal(opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito()
+								.getDafMarcasTarjetaCreditoCPK().getCodigoMarcaTc());
 						strNombreTarjeta = opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito().getNombreMarcaTc();
 //						strTipoTarjeta = !ObjectUtils.isEmpty(
 //								opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito().getDafTiposTarjeta())
@@ -236,14 +233,15 @@ public class DatafastBOImpl implements IDatafastBO {
 					}
 					// Información de banco emisor homologado.
 					if (!ObjectUtils.isEmpty(opFacPinpadBinesMedianet.get().getDafInstituciones())) {
-						intCodBancoEmisor = opFacPinpadBinesMedianet.get().getDafInstituciones().getCodigoInstitucion();
+						intCodBancoEmisor = opFacPinpadBinesMedianet.get().getDafInstituciones()
+								.getDafInstitucionesCPK().getCodigoInstitucion();
 						strNombreBancoEmisor = opFacPinpadBinesMedianet.get().getDafInstituciones()
 								.getNombreInstitucion();
 						logger.info("Bines Banco Emisor: " + strNombreBancoEmisor);
 					}
 					// Información de banco liquidador homologado.
 					if (!ObjectUtils.isEmpty(opFacPinpadBinesMedianet.get().getDafInstitucionLiquidador())) {
-						intCodBancoLiquidador = opFacPinpadBinesMedianet.get().getDafInstitucionLiquidador()
+						intCodBancoLiquidador = opFacPinpadBinesMedianet.get().getDafInstitucionLiquidador().getDafInstitucionesCPK()
 								.getCodigoInstitucion();
 						strNombreBancoLiquidador = opFacPinpadBinesMedianet.get().getDafInstitucionLiquidador()
 								.getNombreInstitucion();
@@ -256,7 +254,8 @@ public class DatafastBOImpl implements IDatafastBO {
 					if (opFacPinpadBinTarjDatafast.isPresent()) {
 						logger.info("Se encuentra bin de tarjeta en datafast: " + bigBinTarjeta);
 						if (!ObjectUtils.isEmpty(opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito())) {
-							bigCodigoTarjeta = new BigDecimal(opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito().getCodigoMarcaTc());
+							bigCodigoTarjeta = new BigDecimal(opFacPinpadBinTarjDatafast.get()
+									.getDafMarcasTarjetaCredito().getDafMarcasTarjetaCreditoCPK().getCodigoMarcaTc());
 							strNombreTarjeta = opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito().getNombreMarcaTc();
 //							strTipoTarjeta = !ObjectUtils.isEmpty(
 //									opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito().getDafTiposTarjeta())
@@ -276,7 +275,7 @@ public class DatafastBOImpl implements IDatafastBO {
 						// Información de banco emisor homologado.
 						if (!ObjectUtils.isEmpty(opFacPinpadBinTarjDatafast.get().getDafInstituciones())) {
 							intCodBancoEmisor = opFacPinpadBinTarjDatafast.get().getDafInstituciones()
-									.getCodigoInstitucion();
+									.getDafInstitucionesCPK().getCodigoInstitucion();
 							strNombreBancoEmisor = opFacPinpadBinTarjDatafast.get().getDafInstituciones()
 									.getNombreInstitucion();
 							logger.info("Bines Banco Emisor: " + strNombreBancoEmisor);
@@ -284,7 +283,7 @@ public class DatafastBOImpl implements IDatafastBO {
 						// Información de banco liquidador homologado.
 						if (!ObjectUtils.isEmpty(opFacPinpadBinTarjDatafast.get().getDafInstitucionLiquidador())) {
 							intCodBancoLiquidador = opFacPinpadBinTarjDatafast.get().getDafInstitucionLiquidador()
-									.getCodigoInstitucion();
+									.getDafInstitucionesCPK().getCodigoInstitucion();
 							strNombreBancoLiquidador = opFacPinpadBinTarjDatafast.get().getDafInstitucionLiquidador()
 									.getNombreInstitucion();
 							logger.info("Bines Banco Liquidador: " + strNombreBancoLiquidador);
@@ -315,8 +314,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		strMID = objFacCajasPinpad.getMid();//objMidOp.get().getValorVarchar();
@@ -470,8 +469,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		strMID = objFacCajasPinpad.getMid();//objMidOp.get().getValorVarchar();
@@ -562,8 +561,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		strMID = objFacCajasPinpad.getMid();//objMidOp.get().getValorVarchar();
@@ -650,8 +649,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		
@@ -738,8 +737,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		
@@ -1048,39 +1047,39 @@ public class DatafastBOImpl implements IDatafastBO {
 		String strFileName = new SimpleDateFormat("MMddyyyy").format(new Date()) + "."
 				+ TipoArchivoEnum.VER.getExtension();
 
-		Optional<DafXParametrosXEmpresa> objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.ROUTE_SFTP_DATAFAST.getName()));
+		Optional<GrlParametrosPinpad> objDafXParametrosXEmpresaOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.ROUTE_SFTP_DATAFAST.getName());
 		if (!objDafXParametrosXEmpresaOp.isPresent())
 			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
-					new Object[] { ParametrosXEmpresa.ROUTE_SFTP_DATAFAST.getName() });
+					new Object[] { ParametrosPinpad.ROUTE_SFTP_DATAFAST.getName() });
 		String strRutaSftp = objDafXParametrosXEmpresaOp.get().getValorString();
 
-		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.DIR_SFTP_DATAFAST.getName()));
+		objDafXParametrosXEmpresaOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.DIR_SFTP_DATAFAST.getName());
 		if (!objDafXParametrosXEmpresaOp.isPresent())
 			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
-					new Object[] { ParametrosXEmpresa.DIR_SFTP_DATAFAST.getName() });
+					new Object[] { ParametrosPinpad.DIR_SFTP_DATAFAST.getName() });
 		String strIpServer = objDafXParametrosXEmpresaOp.get().getValorString();
 
-		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.PORT_SFTP_DATAFAST.getName()));
+		objDafXParametrosXEmpresaOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.PORT_SFTP_DATAFAST.getName());
 		if (!objDafXParametrosXEmpresaOp.isPresent())
 			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
-					new Object[] { ParametrosXEmpresa.PORT_SFTP_DATAFAST.getName() });
+					new Object[] { ParametrosPinpad.PORT_SFTP_DATAFAST.getName() });
 		Integer intPuerto = objDafXParametrosXEmpresaOp.get().getValorNumber().intValue();
 
-		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.USER_SFTP_DATAFAST.getName()));
+		objDafXParametrosXEmpresaOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.USER_SFTP_DATAFAST.getName());
 		if (!objDafXParametrosXEmpresaOp.isPresent())
 			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
-					new Object[] { ParametrosXEmpresa.USER_SFTP_DATAFAST.getName() });
+					new Object[] { ParametrosPinpad.USER_SFTP_DATAFAST.getName() });
 		String strUser = objDafXParametrosXEmpresaOp.get().getValorString();
 
-		objDafXParametrosXEmpresaOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.PASSWORD_SFTP_DATAFAST.getName()));
+		objDafXParametrosXEmpresaOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.PASSWORD_SFTP_DATAFAST.getName());
 		if (!objDafXParametrosXEmpresaOp.isPresent())
 			throw new BOExceptionUpt("pin.warn.parametroNoEncontrado",
-					new Object[] { ParametrosXEmpresa.PASSWORD_SFTP_DATAFAST.getName() });
+					new Object[] { ParametrosPinpad.PASSWORD_SFTP_DATAFAST.getName() });
 		String strPassword = objDafXParametrosXEmpresaOp.get().getValorString();
 
 		try {
@@ -1130,8 +1129,8 @@ public class DatafastBOImpl implements IDatafastBO {
 			throw new BOException("pin.warn.midPinpad");
 		if (ObjectUtils.isEmpty(objFacCajasPinpad.getTid()))
 			throw new BOException("pin.warn.tidPinpad");
-		Optional<DafXParametrosXEmpresa> objTimeOutOp = objDafXParametrosXEmpresaDAOImpl
-				.find(new DafXParametrosXEmpresaCPK((short) 1, ParametrosXEmpresa.TIME_OUT_PINPAD.getName()));
+		Optional<GrlParametrosPinpad> objTimeOutOp = objGrlParametrosPinpadDAOImpl
+				.find(ParametrosPinpad.TIME_OUT_PINPAD.getName());
 		if (!objTimeOutOp.isPresent())
 			throw new BOException("pin.warn.toPinpad");
 		

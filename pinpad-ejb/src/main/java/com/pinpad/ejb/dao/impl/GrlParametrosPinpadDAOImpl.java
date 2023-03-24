@@ -10,8 +10,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
-import com.pinpad.ejb.model.DafXParametrosXEmpresa;
-import com.pinpad.ejb.model.DafXParametrosXEmpresaCPK;
+import com.pinpad.ejb.model.GrlParametrosPinpad;
 
 import lombok.NonNull;
 
@@ -20,10 +19,10 @@ import lombok.NonNull;
  *
  */
 @Stateless
-public class DafXParametrosXEmpresaDAOImpl extends BaseDAO<DafXParametrosXEmpresa,DafXParametrosXEmpresaCPK>{
+public class GrlParametrosPinpadDAOImpl extends BaseDAO<GrlParametrosPinpad, String>{
 	
-	protected DafXParametrosXEmpresaDAOImpl() {
-		super(DafXParametrosXEmpresa.class);
+	protected GrlParametrosPinpadDAOImpl() {
+		super(GrlParametrosPinpad.class);
 	}
 	
 	@PersistenceContext
@@ -35,19 +34,19 @@ public class DafXParametrosXEmpresaDAOImpl extends BaseDAO<DafXParametrosXEmpres
 	}
 	
 	@Override
-	public void persist(DafXParametrosXEmpresa t) throws PersistenceException {
+	public void persist(GrlParametrosPinpad t) throws PersistenceException {
 		// TODO Auto-generated method stub
 		super.persist(t);
 	}
 
 	@Override
-	public void update(DafXParametrosXEmpresa t) throws PersistenceException {
+	public void update(GrlParametrosPinpad t) throws PersistenceException {
 		// TODO Auto-generated method stub
 		super.update(t);
 	}
 
 	@Override
-	public Optional<DafXParametrosXEmpresa> find(@NonNull DafXParametrosXEmpresaCPK id) {
+	public Optional<GrlParametrosPinpad> find(@NonNull String id) {
 		// TODO Auto-generated method stub
 		return super.find(id);
 	}

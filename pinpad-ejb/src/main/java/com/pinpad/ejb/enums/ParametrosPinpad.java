@@ -14,9 +14,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public enum ParametrosXEmpresa {
+public enum ParametrosPinpad {
 	
 	TIME_OUT_PINPAD("TIME_OUT_PINPAD"),
+	MID_PINPAD("MID_PINPAD"),
+	TID_PINPAD("TID_PINPAD"),
 	ROUTE_SFTP_DATAFAST("ROUTE_SFTP_DATAFAST"),
 	DIR_SFTP_DATAFAST("DIR_SFTP_DATAFAST"),
 	PORT_SFTP_DATAFAST("PORT_SFTP_DATAFAST"),

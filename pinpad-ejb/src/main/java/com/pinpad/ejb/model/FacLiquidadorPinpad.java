@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -59,7 +60,9 @@ public class FacLiquidadorPinpad implements Serializable {
 	@Column(name = "DESCRIPCION")
 	private String descripcion;
 	
-	@JoinColumn(name = "CODIGO_INSTITUCION", referencedColumnName = "CODIGO_INSTITUCION")
+	@JoinColumns({
+		@JoinColumn(name = "CODIGO_INSTITUCION", referencedColumnName = "CODIGO_INSTITUCION"),
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	private DafInstituciones dafInstituciones;
 	

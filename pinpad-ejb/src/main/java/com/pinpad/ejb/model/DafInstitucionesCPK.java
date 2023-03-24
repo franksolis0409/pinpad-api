@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * ID implementation class for DafXParametrosXEmpresa Composite Primary Key
+ * ID implementation class for DafInstituciones Composite Primary Key
  *
  */
 @Embeddable
@@ -23,17 +22,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class DafXParametrosXEmpresaCPK implements Serializable {
+public class DafInstitucionesCPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	@Column(name = "CODIGO_INSTITUCION")
+	private Integer codigoInstitucion;
+	
 	@NotNull
 	@Column(name = "CODIGO_EMPRESA")
 	private Short codigoEmpresa;
-
-	@NotNull
-	@Size(max = 60)
-	@Column(name = "NEMONICO_PARAMETRO")
-	private String nemonicoParametro;
 
 }

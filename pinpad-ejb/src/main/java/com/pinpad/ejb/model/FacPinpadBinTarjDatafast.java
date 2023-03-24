@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -54,11 +55,15 @@ public class FacPinpadBinTarjDatafast implements Serializable {
 	@Column(name = "NOMBRE_BANCO_EMISOR")
 	private String nombreBancoEmisor;
 	
-	@JoinColumn(name = "CODIGO_BANCO_EMISOR", referencedColumnName = "CODIGO_INSTITUCION")
+	@JoinColumns({
+		@JoinColumn(name = "CODIGO_BANCO_EMISOR", referencedColumnName = "CODIGO_INSTITUCION"),
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	private DafInstituciones dafInstituciones;
 	
-	@JoinColumn(name = "CODIGO_BANCO_LIQUIDADOR", referencedColumnName = "CODIGO_INSTITUCION")
+	@JoinColumns({
+		@JoinColumn(name = "CODIGO_BANCO_LIQUIDADOR", referencedColumnName = "CODIGO_INSTITUCION"),
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	private DafInstituciones dafInstitucionLiquidador;
 
@@ -66,7 +71,9 @@ public class FacPinpadBinTarjDatafast implements Serializable {
 	@Column(name = "MARCA_TARJETA")
 	private String marcaTarjeta;
 		
-	@JoinColumn(name = "CODIGO_MARCA_TARJETA", referencedColumnName = "CODIGO_MARCA_TC")
+	@JoinColumns({
+		@JoinColumn(name = "CODIGO_TARJETA", referencedColumnName = "CODIGO_MARCA_TC"),
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	private DafMarcasTarjetaCredito dafMarcasTarjetaCredito;
 

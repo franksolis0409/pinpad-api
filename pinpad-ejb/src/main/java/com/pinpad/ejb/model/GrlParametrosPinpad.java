@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -20,7 +20,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
- * Entity implementation class for Entity: FacParametrosGenerales
+ * Entity implementation class for Entity: DafXParametroXEmpresa
  *
  */
 @Entity
@@ -29,38 +29,36 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Table(name = "FAC_PARAMETROS_GENERALES")
-public class FacParametrosGenerales implements Serializable {
-
+@Table(name = "GRL_PARAMETROS_PINPAD")
+public class GrlParametrosPinpad implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
+	@Id
 	@EqualsAndHashCode.Include
-	protected FacParametrosGeneralesCPK facParametrosGeneralesCPK;
+	@NotNull
+	@Column(name = "NEMONICO_PARAMETRO")
+	private String nemonicoParametro;
 
 	@NotNull
-	@Size(max = 1000)
+	@Size(max = 100)
 	@Column(name = "DESCRIPCION")
 	private String descripcion;
 
 	@NotNull
+	@Size(max = 100)
 	@Column(name = "VALOR_NUMBER")
 	private BigDecimal valorNumber;
 
 	@NotNull
-	@Size(max = 4000)
-	@Column(name = "VALOR_VARCHAR")
-	private String valorVarchar;
-	
+	@Size(max = 100)
+	@Column(name = "VALOR_STRING")
+	private String valorString;
+
 	@NotNull
 	@Size(min = 1, max = 1)
 	@Column(name = "ES_ACTIVO")
 	private String esActivo;
-
-	@NotNull
-	@Size(min = 1, max = 1)
-	@Column(name = "ES_SISTEMA")
-	private String esSistema;
 
 	@NotNull
 	@Size(min = 1, max = 100)
@@ -71,7 +69,7 @@ public class FacParametrosGenerales implements Serializable {
 	@Column(name = "FECHA_INGRESO")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date fechaIngreso;
-	
+
 	@Size(max = 100)
 	@Column(name = "USUARIO_MODIFICACION")
 	private String usuarioModificacion;

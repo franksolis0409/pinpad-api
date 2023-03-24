@@ -5,7 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * ID implementation class for DafXParametrosXEmpresa Composite Primary Key
+ * ID implementation class for DafMarcasTarjetaCredito Composite Primary Key
  *
  */
 @Embeddable
@@ -23,14 +22,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class FacParametrosGeneralesCPK implements Serializable {
+public class DafMarcasTarjetaCreditoCPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@NotNull
-	@Size(max = 60)
-	@Column(name = "NEMONICO")
-	private String nemonico;
+	@Column(name = "CODIGO_MARCA_TC")
+	private Short codigoMarcaTc;
 	
 	@NotNull
 	@Column(name = "CODIGO_EMPRESA")

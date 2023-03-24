@@ -4,16 +4,15 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
@@ -33,11 +32,9 @@ public class DafMarcasTarjetaCredito implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	@Id
+	@EmbeddedId
 	@EqualsAndHashCode.Include
-	@NotNull
-	@Column(name = "CODIGO_MARCA_TC")
-	private Short codigoMarcaTc;
+	protected DafMarcasTarjetaCreditoCPK dafMarcasTarjetaCreditoCPK;
 	
 	@JoinColumns({ @JoinColumn(name = "CODIGO_TIPO_TARJETA", referencedColumnName = "CODIGO_TIPO_TARJETA"), 
 				   @JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA")})
