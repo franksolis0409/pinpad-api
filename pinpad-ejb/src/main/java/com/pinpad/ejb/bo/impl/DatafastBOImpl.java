@@ -132,6 +132,13 @@ public class DatafastBOImpl implements IDatafastBO {
 		String strIdReplace = strIdCaja.replace("-", "");
 		String strId = strIdReplace.substring(0, (strIdReplace.length() > 15) ? 15 : strIdReplace.length());
 		// INICIALIZACIÓN DE ARCHIVO DE CONFIGURACIÓN CON DATOS DE PINPAD A CONECTARSE.
+		logger.log(Level.INFO, "--== PROCESO LECTURA TARJETA ==--");
+		logger.log(Level.INFO, "CAJAID: " + strId);
+		logger.log(Level.INFO, "IP: " + strIpPinpad);
+		logger.log(Level.INFO, "PUERTO: " + Integer.parseInt(strPuerto));
+		logger.log(Level.INFO, "TIMEOUT: " + intTO);
+		logger.log(Level.INFO, "MID: " + strMID);
+		logger.log(Level.INFO, "TID: " + strTID);
 		DF.LANConfig config = new LANConfig(strIpPinpad, Integer.parseInt(strPuerto), intTO, strMID, strTID, strId, 2,
 				2);
 		DF.LAN lan = new DF.LAN(config);
@@ -328,6 +335,13 @@ public class DatafastBOImpl implements IDatafastBO {
 		hora = hourFormat.parse(new SimpleDateFormat("HHmmss").format(fechaActual));
 		fecha = dateFormat.parse(new SimpleDateFormat("yyyyMMdd").format(fechaActual));
 		// INICIALIZACIÓN DE ARCHIVO DE CONFIGURACIÓN CON DATOS DE PINPAD A CONECTARSE.
+		logger.log(Level.INFO, "--== PROCESO PAGOS ==--");
+		logger.log(Level.INFO, "CAJAID: " + strId);
+		logger.log(Level.INFO, "IP: " + strIpPinpad);
+		logger.log(Level.INFO, "PUERTO: " + Integer.parseInt(strPuerto));
+		logger.log(Level.INFO, "TIMEOUT: " + intTO);
+		logger.log(Level.INFO, "MID: " + strMID);
+		logger.log(Level.INFO, "TID: " + strTID);
 		DF.LANConfig config = new LANConfig(strIpPinpad, Integer.parseInt(strPuerto), intTO, strMID, strTID, strId, 2,
 				2);
 		DF.LAN lan = new DF.LAN(config);
@@ -480,6 +494,13 @@ public class DatafastBOImpl implements IDatafastBO {
 		String strIdReplace = strIdCaja.replace("-", "");
 		String strId = strIdReplace.substring(0, (strIdReplace.length() > 15) ? 15 : strIdReplace.length());
 		// INICIALIZACIÓN DE ARCHIVO DE CONFIGURACIÓN CON DATOS DE PINPAD A CONECTARSE.
+		logger.log(Level.INFO, "--== PROCESO ANULACIÓN ==--");
+		logger.log(Level.INFO, "CAJAID: " + strId);
+		logger.log(Level.INFO, "IP: " + strIpPinpad);
+		logger.log(Level.INFO, "PUERTO: " + Integer.parseInt(strPuerto));
+		logger.log(Level.INFO, "TIMEOUT: " + intTO);
+		logger.log(Level.INFO, "MID: " + strMID);
+		logger.log(Level.INFO, "TID: " + strTID);
 		DF.LANConfig config = new LANConfig(strIpPinpad, Integer.parseInt(strPuerto), intTO, strMID, strTID, strId, 2,
 				2);
 		DF.LAN lan = new DF.LAN(config);
@@ -493,6 +514,7 @@ public class DatafastBOImpl implements IDatafastBO {
 					: intCodigoRed;
 			anulacion.Referencia = strReferencia;
 			anulacion.Autorizacion = strNumAutorizacion;
+//			logger.log(Level.INFO, "Objeto request: " + anulacion.getClass().toString());
 			resp = lan.ProcesoPago(anulacion);
 		} catch (Exception e) {
 			// TODO: handle exception
