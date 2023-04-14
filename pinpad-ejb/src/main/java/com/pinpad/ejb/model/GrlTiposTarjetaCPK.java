@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * ID implementation class for DafMarcasTarjetaCredito Composite Primary Key
+ * ID implementation class for GrlTiposTarjeta Composite Primary Key
  *
  */
 @Embeddable
@@ -22,12 +22,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class DafMarcasTarjetaCreditoCPK implements Serializable {
+public class GrlTiposTarjetaCPK implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "CODIGO_MARCA_TC")
-	private Short codigoMarcaTc;
+	@NotNull
+	@Column(name = "CODIGO_TIPO_TARJETA")
+	private Long codigoTipotarjeta;
 	
 	@NotNull
 	@Column(name = "CODIGO_EMPRESA")

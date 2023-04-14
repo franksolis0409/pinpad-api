@@ -57,10 +57,10 @@ public class FacMarcasTarjetaPinpad implements Serializable {
 	private String grupoTarjeta;
 	
 	@JoinColumns({
-		@JoinColumn(name = "CODIGO_TARJETA", referencedColumnName = "CODIGO_MARCA_TC"),
-		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	private DafMarcasTarjetaCredito dafMarcasTarjetaCredito;
+		@JoinColumn(name = "CODIGO_TARJETA", referencedColumnName = "CODIGO_MARCA_TC", insertable = false, updatable = false),
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA", insertable = false, updatable = false) })	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private GrlMarcasTarjetaCredito grlMarcasTarjetaCredito;
 	
 	@Size(max = 1)
 	@Column(name = "ES_ACTIVO")

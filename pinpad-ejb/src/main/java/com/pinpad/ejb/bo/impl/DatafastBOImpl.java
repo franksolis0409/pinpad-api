@@ -128,6 +128,13 @@ public class DatafastBOImpl implements IDatafastBO {
 		String strIdReplace = strIdCaja.replace("-", "");
 		String strId = strIdReplace.substring(0, (strIdReplace.length() > 15) ? 15 : strIdReplace.length());
 		// INICIALIZACIÓN DE ARCHIVO DE CONFIGURACIÓN CON DATOS DE PINPAD A CONECTARSE.
+		logger.log(Level.INFO, "--== PROCESO LECTURA TARJETA ==--");
+		logger.log(Level.INFO, "CAJAID: " + strId);
+		logger.log(Level.INFO, "IP: " + strIpPinpad);
+		logger.log(Level.INFO, "PUERTO: " + Integer.parseInt(strPuerto));
+		logger.log(Level.INFO, "TIMEOUT: " + intTO);
+		logger.log(Level.INFO, "MID: " + strMID);
+		logger.log(Level.INFO, "TID: " + strTID);
 		DF.LANConfig config = new LANConfig(strIpPinpad, Integer.parseInt(strPuerto), intTO, strMID, strTID, strId, 2,
 				2);
 		DF.LAN lan = new DF.LAN(config);
@@ -212,10 +219,10 @@ public class DatafastBOImpl implements IDatafastBO {
 		        		// Si la transacción es diferidos cambia código de red para ruteo hacia Medianet.
 		        		intCodigoRed = CodigoRedAdquirente.MEDIANET.getCodigo();
 					}
-					if (!ObjectUtils.isEmpty(opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito())) {
-						bigCodigoTarjeta = new BigDecimal(opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito()
-								.getDafMarcasTarjetaCreditoCPK().getCodigoMarcaTc());
-						strNombreTarjeta = opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito().getNombreMarcaTc();
+					if (!ObjectUtils.isEmpty(opFacPinpadBinesMedianet.get().getGrlMarcasTarjetaCredito())) {
+						bigCodigoTarjeta = new BigDecimal(opFacPinpadBinesMedianet.get().getGrlMarcasTarjetaCredito()
+								.getGrlMarcasTarjetaCreditoCPK().getCodigoMarcaTc());
+						strNombreTarjeta = opFacPinpadBinesMedianet.get().getGrlMarcasTarjetaCredito().getNombreMarcaTc();
 //						strTipoTarjeta = !ObjectUtils.isEmpty(
 //								opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito().getDafTiposTarjeta())
 //										? opFacPinpadBinesMedianet.get().getDafMarcasTarjetaCredito()
@@ -253,10 +260,10 @@ public class DatafastBOImpl implements IDatafastBO {
 					// Si se encuentra bin de tarjeta se setea información de la tarjeta homologada.
 					if (opFacPinpadBinTarjDatafast.isPresent()) {
 						logger.info("Se encuentra bin de tarjeta en datafast: " + bigBinTarjeta);
-						if (!ObjectUtils.isEmpty(opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito())) {
+						if (!ObjectUtils.isEmpty(opFacPinpadBinTarjDatafast.get().getGrlMarcasTarjetaCredito())) {
 							bigCodigoTarjeta = new BigDecimal(opFacPinpadBinTarjDatafast.get()
-									.getDafMarcasTarjetaCredito().getDafMarcasTarjetaCreditoCPK().getCodigoMarcaTc());
-							strNombreTarjeta = opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito().getNombreMarcaTc();
+									.getGrlMarcasTarjetaCredito().getGrlMarcasTarjetaCreditoCPK().getCodigoMarcaTc());
+							strNombreTarjeta = opFacPinpadBinTarjDatafast.get().getGrlMarcasTarjetaCredito().getNombreMarcaTc();
 //							strTipoTarjeta = !ObjectUtils.isEmpty(
 //									opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito().getDafTiposTarjeta())
 //									? opFacPinpadBinTarjDatafast.get().getDafMarcasTarjetaCredito()
@@ -327,6 +334,14 @@ public class DatafastBOImpl implements IDatafastBO {
 		hora = hourFormat.parse(new SimpleDateFormat("HHmmss").format(fechaActual));
 		fecha = dateFormat.parse(new SimpleDateFormat("yyyyMMdd").format(fechaActual));
 		// INICIALIZACIÓN DE ARCHIVO DE CONFIGURACIÓN CON DATOS DE PINPAD A CONECTARSE.
+
+		logger.log(Level.INFO, "--== PROCESO PAGOS ==--");
+		logger.log(Level.INFO, "CAJAID: " + strId);
+		logger.log(Level.INFO, "IP: " + strIpPinpad);
+		logger.log(Level.INFO, "PUERTO: " + Integer.parseInt(strPuerto));
+		logger.log(Level.INFO, "TIMEOUT: " + intTO);
+		logger.log(Level.INFO, "MID: " + strMID);
+		logger.log(Level.INFO, "TID: " + strTID);
 		DF.LANConfig config = new LANConfig(strIpPinpad, Integer.parseInt(strPuerto), intTO, strMID, strTID, strId, 2,
 				2);
 		DF.LAN lan = new DF.LAN(config);

@@ -61,9 +61,9 @@ public class FacLiquidadorPinpad implements Serializable {
 	private String descripcion;
 	
 	@JoinColumns({
-		@JoinColumn(name = "CODIGO_INSTITUCION", referencedColumnName = "CODIGO_INSTITUCION"),
-		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA", insertable = false, updatable = false),
+		@JoinColumn(name = "CODIGO_INSTITUCION", referencedColumnName = "CODIGO_INSTITUCION", insertable = false, updatable = false) })
+	@ManyToOne(fetch = FetchType.LAZY)
 	private DafInstituciones dafInstituciones;
 	
 	@Size(max = 1)

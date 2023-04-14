@@ -25,13 +25,13 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "DAF_TIPOS_TARJETA")
-public class DafTiposTarjeta implements Serializable {
+public class GrlTiposTarjeta implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
 	@EqualsAndHashCode.Include
-	protected DafTiposTarjetaCPK dafTiposTarjetaCPK;
+	protected GrlTiposTarjetaCPK grlTiposTarjetaCPK;
 	
 	@NotNull
 	@Size(max = 300)

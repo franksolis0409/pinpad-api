@@ -214,15 +214,15 @@ public class DatafastUtil {
 										objTrama.setErrorInterno(
 												MensajesUtil.getMensaje("pin.warn.grupoTarjeta", MensajesUtil.Locale));
 									else if (ObjectUtils
-											.isEmpty(objFacMarcasTarjetaPinpad.getDafMarcasTarjetaCredito()))
+											.isEmpty(objFacMarcasTarjetaPinpad.getGrlMarcasTarjetaCredito()))
 										objTrama.setErrorInterno(MensajesUtil.getMensaje("pin.warn.codigoTarjetaGrupo",
 												new Object[] { objFacMarcasTarjetaPinpad.getGrupoTarjeta() },
 												MensajesUtil.Locale));
 									else {
 										objTrama.setCodTarjeta(
-												new BigDecimal(objFacMarcasTarjetaPinpad.getDafMarcasTarjetaCredito()
-														.getDafMarcasTarjetaCreditoCPK().getCodigoMarcaTc()));
-										objTrama.setNombreTarjeta(objFacMarcasTarjetaPinpad.getDafMarcasTarjetaCredito()
+												new BigDecimal(objFacMarcasTarjetaPinpad.getGrlMarcasTarjetaCredito()
+														.getGrlMarcasTarjetaCreditoCPK().getCodigoMarcaTc()));
+										objTrama.setNombreTarjeta(objFacMarcasTarjetaPinpad.getGrlMarcasTarjetaCredito()
 												.getNombreMarcaTc());
 									}
 								}

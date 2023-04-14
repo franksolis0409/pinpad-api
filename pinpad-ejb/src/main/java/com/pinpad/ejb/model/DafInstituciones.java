@@ -6,6 +6,10 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +37,7 @@ public class DafInstituciones implements Serializable {
 	
 	@EmbeddedId
 	@EqualsAndHashCode.Include
-	protected DafInstitucionesCPK dafInstitucionesCPK;
+	protected DafInstitucionesCPK dafInstitucionesCPK;	
 	
 	@Column(name = "CODIGO_TIPO_ACTIVIDAD")
 	private Short codigoTipoActividad;
@@ -233,9 +237,6 @@ public class DafInstituciones implements Serializable {
 	@Size(max = 1)
 	@Column(name = "PAGO_SUJETO_RETENCION")
 	private String pagoSujetoRetencion;
-	
-	@Column(name = "CODIGO_EMPRESA")
-	private Short codigoEmpresa;	
 	
 	@Size(max = 1)
 	@Column(name = "USA_POST")

@@ -28,18 +28,19 @@ import lombok.NoArgsConstructor;
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "DAF_MARCAS_TARJETA_CREDITO")
-public class DafMarcasTarjetaCredito implements Serializable {
+public class GrlMarcasTarjetaCredito implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@EmbeddedId
 	@EqualsAndHashCode.Include
-	protected DafMarcasTarjetaCreditoCPK dafMarcasTarjetaCreditoCPK;
+	protected GrlMarcasTarjetaCreditoCPK grlMarcasTarjetaCreditoCPK;
 	
-	@JoinColumns({ @JoinColumn(name = "CODIGO_TIPO_TARJETA", referencedColumnName = "CODIGO_TIPO_TARJETA"), 
-				   @JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA")})
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	private DafTiposTarjeta dafTiposTarjeta;
+	@JoinColumns({
+		@JoinColumn(name = "CODIGO_TIPO_TARJETA", referencedColumnName = "CODIGO_TIPO_TARJETA", insertable = false, updatable = false),
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA", insertable = false, updatable = false) })	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private GrlTiposTarjeta grlTiposTarjeta;
 	
 	@Size(max = 100)
 	@Column(name = "NOMBRE_MARCA_TC")

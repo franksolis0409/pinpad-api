@@ -63,22 +63,22 @@ public class FacPinpadBinesMedianet implements Serializable {
 	private String nombreEmpresaMedianet;
 	
 	@JoinColumns({
-		@JoinColumn(name = "CODIGO_BANCO_EMISOR", referencedColumnName = "CODIGO_INSTITUCION"),
-		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+		@JoinColumn(name = "CODIGO_EMPRESA_EMISOR", referencedColumnName = "CODIGO_EMPRESA", insertable = false, updatable = false),
+		@JoinColumn(name = "CODIGO_BANCO_EMISOR", referencedColumnName = "CODIGO_INSTITUCION", insertable = false, updatable = false) })	
+	@ManyToOne(fetch = FetchType.LAZY)
 	private DafInstituciones dafInstituciones;
 	
 	@JoinColumns({
-		@JoinColumn(name = "CODIGO_BANCO_LIQUIDADOR", referencedColumnName = "CODIGO_INSTITUCION"),
-		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+		@JoinColumn(name = "CODIGO_EMPRESA_LIQUIDADOR", referencedColumnName = "CODIGO_EMPRESA", insertable = false, updatable = false),
+		@JoinColumn(name = "CODIGO_BANCO_LIQUIDADOR", referencedColumnName = "CODIGO_INSTITUCION", insertable = false, updatable = false) })	
+	@ManyToOne(fetch = FetchType.LAZY)
 	private DafInstituciones dafInstitucionLiquidador;
 	
 	@JoinColumns({
-		@JoinColumn(name = "CODIGO_TARJETA", referencedColumnName = "CODIGO_MARCA_TC"),
-		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA") })	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
-	private DafMarcasTarjetaCredito dafMarcasTarjetaCredito;
+		@JoinColumn(name = "CODIGO_EMPRESA", referencedColumnName = "CODIGO_EMPRESA", insertable = false, updatable = false),
+		@JoinColumn(name = "CODIGO_TARJETA", referencedColumnName = "CODIGO_MARCA_TC", insertable = false, updatable = false) })	
+	@ManyToOne(fetch = FetchType.LAZY)
+	private GrlMarcasTarjetaCredito grlMarcasTarjetaCredito;
 
 	@Size(max = 1)
 	@Column(name = "TIPO_CUENTA")
